@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "1920efd2-4085-4975-82a6-e24dc78f06aa": {
+      "ProjectGuid": "1920efd2-4085-4975-82a6-e24dc78f06aa",
+      "DisplayName": "FunctionAppAM",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

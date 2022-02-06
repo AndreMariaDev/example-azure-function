@@ -1,0 +1,224 @@
+{
+	"info": {
+		"_postman_id": "e41f696f-7537-4b96-a617-bdb5828a4e82",
+		"name": "Azure",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "https://management.azure.com/subscriptions/{{subscriptionId}}resourcegroups?api-version=2022-02-06",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (!pm.collectionVariables.get(\"bearerToken\") || Date.now() > new Date(pm.collectionVariables.get(\"bearerTokenExpiresOn\") * 1000)) {\r",
+							"    pm.sendRequest({\r",
+							"        url: 'https://login.microsoftonline.com/' + pm.collectionVariables.get(\"tenantId\") + '/oauth2/token',\r",
+							"        method: 'POST',\r",
+							"        header: 'Content-Type: application/x-www-form-urlencoded',\r",
+							"        body: {\r",
+							"            mode: 'urlencoded',\r",
+							"            urlencoded: [\r",
+							"                { key: \"grant_type\", value: \"client_credentials\", disabled: false },\r",
+							"                { key: \"client_id\", value: pm.collectionVariables.get(\"clientId\"), disabled: false },\r",
+							"                { key: \"client_secret\", value: pm.collectionVariables.get(\"clientSecret\"), disabled: false },\r",
+							"                { key: \"resource\", value: pm.collectionVariables.get(\"resource\") || \"https://management.azure.com/\", disabled: false }\r",
+							"            ]\r",
+							"        }\r",
+							"    }, function (err, res) {\r",
+							"        if (err) {\r",
+							"            console.log(err);\r",
+							"        } else {\r",
+							"            let resJson = res.json();\r",
+							"            pm.collectionVariables.set(\"bearerTokenExpiresOn\", resJson.expires_on);\r",
+							"            pm.collectionVariables.set(\"bearerToken\", resJson.access_token);\r",
+							"        }\r",
+							"    });\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearerToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}resourcegroups?api-version=2022-02-06",
+					"protocol": "https",
+					"host": [
+						"management",
+						"azure",
+						"com"
+					],
+					"path": [
+						"subscriptions",
+						"{{subscriptionId}}resourcegroups"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2022-02-06"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://{{azure_storage_account}}.table.core.windows.net/AMCCAplicationTable()",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(\"Paaso 0\")\r",
+							"\r",
+							"const storageAccount = pm.variables.get('azure_storage_account');\r",
+							"const accountKey = pm.variables.get('azure_storage_key');\r",
+							"\r",
+							"const date = new Date();\r",
+							"const UTCstring = date.toUTCString();\r",
+							"\r",
+							"const dataToEncode = UTCstring + \"\\n\" + `/${storageAccount}${pm.request.url.getPath()}`;\r",
+							"\r",
+							"const encodedData = unescape(encodeURIComponent(dataToEncode));\r",
+							"\r",
+							"var hash = CryptoJS.HmacSHA256(encodedData, CryptoJS.enc.Base64.parse(accountKey));\r",
+							"var signature = hash.toString(CryptoJS.enc.Base64);\r",
+							"\r",
+							"var auth = \"SharedKeyLite \" + storageAccount + \":\" + signature;\r",
+							"\r",
+							"pm.variables.set(\"header_authorization\", auth);\r",
+							"pm.variables.set(\"header_date\", UTCstring);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-ms-date",
+						"value": "{{header_date}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{header_authorization}}",
+						"type": "text"
+					},
+					{
+						"key": "x-ms-version",
+						"value": "2019-02-02",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json;odata=nometadata",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{azure_storage_account}}.table.core.windows.net/AMCCAplicationTable()",
+					"protocol": "https",
+					"host": [
+						"{{azure_storage_account}}",
+						"table",
+						"core",
+						"windows",
+						"net"
+					],
+					"path": [
+						"AMCCAplicationTable()"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://{{azure_storage_account}}.table.core.windows.net/Tables",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(\"Paaso 0\")\r",
+							"\r",
+							"const storageAccount = pm.variables.get('azure_storage_account');\r",
+							"const accountKey = pm.variables.get('azure_storage_key');\r",
+							"\r",
+							"const date = new Date();\r",
+							"const UTCstring = date.toUTCString();\r",
+							"\r",
+							"const dataToEncode = UTCstring + \"\\n\" + `/${storageAccount}${pm.request.url.getPath()}`;\r",
+							"\r",
+							"const encodedData = unescape(encodeURIComponent(dataToEncode));\r",
+							"\r",
+							"var hash = CryptoJS.HmacSHA256(encodedData, CryptoJS.enc.Base64.parse(accountKey));\r",
+							"var signature = hash.toString(CryptoJS.enc.Base64);\r",
+							"\r",
+							"var auth = \"SharedKeyLite \" + storageAccount + \":\" + signature;\r",
+							"\r",
+							"pm.variables.set(\"header_authorization\", auth);\r",
+							"pm.variables.set(\"header_date\", UTCstring);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-ms-date",
+						"value": "{{header_date}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{header_authorization}}",
+						"type": "text"
+					},
+					{
+						"key": "x-ms-version",
+						"value": "2019-02-02",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json;odata=nometadata",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{azure_storage_account}}.table.core.windows.net/Tables",
+					"protocol": "https",
+					"host": [
+						"{{azure_storage_account}}",
+						"table",
+						"core",
+						"windows",
+						"net"
+					],
+					"path": [
+						"Tables"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
