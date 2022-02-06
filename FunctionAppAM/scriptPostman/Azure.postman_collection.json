@@ -219,6 +219,42 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "https://functionappam20220205193835.azurewebsites.net/api/applyforccapp?code=<Sua Function Keys>",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Name\": \"Andre Fernando de O Maria\",\r\n    \"Age\": 41,\r\n    \"Occupation\":\"Developer\",\r\n    \"YearlyIncome\":50000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://functionappam20220205193835.azurewebsites.net/api/applyforccapp?code=<Sua Function Keys>",
+					"protocol": "https",
+					"host": [
+						"functionappam20220205193835",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"applyforccapp"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "<Sua Function Keys>"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
